@@ -8,14 +8,22 @@ public class PlrController : MonoBehaviour
     public float maxHealth = 100f;
     public float health = 100f;
     public bool isDead = false;
+    public GameObject deadText;
+    public int healthPotions = 1;
+    public float healthPotionHeal = 50f;
 
     private Rigidbody rb;
     private PlrMove movement;
+    private AudioSource painSound;
 
     //take damage
     public void TakeDamage(float dmg)
     {
-        health -= dmg;
+        if (!isDead)
+        {
+            health -= dmg;
+            painSound.PlayOneShot(painSound.clip);
+        }
     }
     //check if dead
     public void DeadCheck()
@@ -23,6 +31,7 @@ public class PlrController : MonoBehaviour
         if (health <= 0)
         {
             isDead = true;
+            health = 0;
         }
     }
 
@@ -31,6 +40,7 @@ public class PlrController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         movement = GetComponent<PlrMove>();
+        painSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -42,10 +52,33 @@ public class PlrController : MonoBehaviour
             rb.isKinematic = false;
             rb.freezeRotation = true;
             movement.canMove = false;
+            deadText.SetActive(true);
         }
         else
         {
-            //do nothing
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                UseHealthPotion();
+            }
+        }
+
+    }
+
+    void UseHealthPotion()
+    {
+        if(health != maxHealth && healthPotions > 0)
+        {
+            float differenceFromMax = maxHealth - health;
+            if(differenceFromMax > 50)
+            {
+                health += healthPotionHeal;
+                healthPotions -= 1;
+            }
+            else
+            {
+                health = maxHealth;
+                healthPotions -= 1;
+            }
         }
     }
 }
