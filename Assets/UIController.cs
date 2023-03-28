@@ -52,7 +52,7 @@ public class UIController : MonoBehaviour
         {
             reloading.text = "";
         }
-        healthPot.text = "Health potions: " + player.healthPotions;
+        healthPot.text = "(Q) Health potions: " + player.healthPotions;
     }
 
     public void HitText(string msg)
